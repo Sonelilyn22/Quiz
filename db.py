@@ -1,7 +1,9 @@
 import pymysql as mdb
 
 db = mdb.connect(host='localhost',user='root',password='root',database='Quiz')
+
 db.autocommit(True)
+
 def insert_one(table:str,query:str):#Название таблицы , запрос
     try:
         cursor = db.cursor()
