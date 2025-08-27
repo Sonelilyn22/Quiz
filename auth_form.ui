@@ -1,29 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-#to_reg_button{
-  border:none;
-  background-color:none;
-}
-/*Стиль для всех полей ввода*/
-QLineEdit{
-	margin:5px;
-	border-radius:10px;
-	padding:5px;
-}
-/*Стиль для всех кнопок*/
-QPushButton{
-	border:1px solid black;
-	border-radius:5px;
-	background-color:#f0fff0; ;
-	height:30px;
-}
-/*Наведение на кнопку*/
-QPushButton::hover{
-	background-color:red;
-}
-QLabel{
-	margin-left:5px;
-}
  <class>Form</class>
  <widget class="QWidget" name="Form">
   <property name="geometry">
@@ -43,7 +19,7 @@ QLabel{
      <x>80</x>
      <y>50</y>
      <width>361</width>
-     <height>251</height>
+     <height>258</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -106,7 +82,14 @@ QLabel{
        <bool>false</bool>
       </property>
       <property name="placeholderText">
-       <string>Введите имя</string>
+       <string>Введите логин</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="message_login">
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </item>
@@ -131,6 +114,13 @@ QLabel{
       </property>
       <property name="placeholderText">
        <string>Введите пароль</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="message_password">
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </item>
@@ -180,6 +170,13 @@ QLabel{
       </property>
       <property name="text">
        <string>Войти</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="message_auth">
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </item>

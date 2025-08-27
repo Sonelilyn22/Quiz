@@ -4,13 +4,15 @@ db = mdb.connect(host='localhost',user='root',password='root',database='Quiz')
 
 db.autocommit(True)
 
-def insert_one(table:str,query:str):#Название таблицы , запрос
+def insert_one(table:str,query:str) -> str | None:#Название таблицы , запрос
     try:
         cursor = db.cursor()
         cursor.execute(f'INSERT INTO {table} {query}')
         cursor.close()
-    except: #Если произошла любая ошибка
+        return None
+    except mdb.IntegrityError: #Если произошла любая ошибка
         print('Во время выполнения запроса произошла ошибка')
+        return 'error'
 
 def get_one_by_id(table:str,id:int) -> list | None:
     cursor = db.cursor()

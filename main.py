@@ -73,9 +73,11 @@ class LoginUi(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         uic.loadUi('auth_form.ui',self)
+        self.message_hide()
         self.findChild(QtWidgets.QPushButton,'auth_button').clicked.connect(self.auth)#На кнопку входа добавили событие при нажатии
         self.findChild(QtWidgets.QPushButton,'to_reg_button').clicked.connect(self.to_reg)
     def auth(self):
+        self.message_hide()
         login = self.findChild(QtWidgets.QLineEdit,'input_login').text()
         password = self.findChild(QtWidgets.QLineEdit,'input_pass').text()
         if login != '':
@@ -88,19 +90,31 @@ class LoginUi(QtWidgets.QWidget):
                     set_user(mainwindow.user.id)
                     mainwindow.ui = GeneralUi(mainwindow.user)
                     mainwindow.setCentralWidget(mainwindow.ui)
+                else:
+                    self.findChild(QtWidgets.QLabel,'message_auth').setText('Аккаунт не найден')
+                    self.findChild(QtWidgets.QLabel,'message_auth').show()
             else:
-                print('Пароль не заполнен')
+                self.findChild(QtWidgets.QLabel,'message_password').setText('Поле пароль не заполнено')
+                self.findChild(QtWidgets.QLabel,'message_password').show()
         else:
-            print('Поле логин не заполнено')
+            self.findChild(QtWidgets.QLabel,'message_login').setText('Поле логин не заполнено')
+            self.findChild(QtWidgets.QLabel,'message_login').show() 
     def to_reg(self):
         mainwindow.ui = RegUi()
         mainwindow.setCentralWidget(mainwindow.ui)
+    def message_hide(self):
+        self.findChild(QtWidgets.QLabel,'message_login').hide()
+        self.findChild(QtWidgets.QLabel,'message_password').hide()
+        self.findChild(QtWidgets.QLabel,'message_auth').hide()   
 class RegUi(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         uic.loadUi('reg_form.ui',self)
+        self.message_hide()
         self.findChild(QtWidgets.QPushButton,'reg_button').clicked.connect(self.reg)
+        self.findChild(QtWidgets.QPushButton,'back_button').clicked.connect(self.back)
     def reg(self):
+        self.message_hide()
         login = self.findChild(QtWidgets.QLineEdit,'input_login').text()
         password = self.findChild(QtWidgets.QLineEdit,'input_pass').text()
         password2 = self.findChild(QtWidgets.QLineEdit,'input_repeat_pass').text()
@@ -111,12 +125,49 @@ class RegUi(QtWidgets.QWidget):
                 if password2 != '' and password2 == password:
                     query = f'''(login,password,birthdate,email)
                     VALUES('{login}','{password}','{birthdate}','{email}')'''
-                    db.insert_one('users',query)
-                    mainwindow.ui = LoginUi()
-                    mainwindow.setCentralWidget(mainwindow.ui)
+                    result = db.insert_one('users',query)
+                    if result == None:
+                        mainwindow.ui = LoginUi()
+                        mainwindow.setCentralWidget(mainwindow.ui)
+                    else:
+                        self.findChild(QtWidgets.QLabel,'message_reg').setText('Аккаунт уже существует')
+                        self.findChild(QtWidgets.QLabel,'message_reg').show()
+                else:
+                    self.findChild(QtWidgets.QLabel,'message_repeat_password').setText('Поле повтор пароля не заполнено')
+                    self.findChild(QtWidgets.QLabel,'message_repeat_password').show()
             else:
-                print('Пароль не заполнен')
+                self.findChild(QtWidgets.QLabel,'message_password').setText('Поле пароль не заполнено')
+                self.findChild(QtWidgets.QLabel,'message_password').show()
         else:
-            print('Поле логин не заполнено')
+            self.findChild(QtWidgets.QLabel,'message_login').setText('Поле логин не заполненено')
+            self.findChild(QtWidgets.QLabel,'message_login').show()
+    def message_hide(self):
+        self.findChild(QtWidgets.QLabel,'message_login').hide()
+        self.findChild(QtWidgets.QLabel,'message_password').hide()
+        self.findChild(QtWidgets.QLabel,'message_repeat_password').hide()
+        self.findChild(QtWidgets.QLabel,'message_reg').hide()
+    def back(self):
+        mainwindow.ui = LoginUi()
+        mainwindow.setCentralWidget(mainwindow.ui)
+class CreateTestUi(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('create_test.ui',self)
+        self.message_hide()
+        self.findChild(QtWidgets.QPushButton,'back_button').clicked.connect(self.back)
+        self.findChild(QtWidgets.QPushButton,'create_question_button').clicked.connect(self.create_question)
+        self.findChild(QtWidgets.QPushButton,'create_test_button').clicked.connect(self.create_test)
+    def message_hide(self):
+        self.findChild(QtWidgets.QLabel,'message_name').hide()
+        self.findChild(QtWidgets.QLabel,'message_description').hide()
+        self.findChild(QtWidgets.QLabel,'message_create').hide()
+    def back(self):
+        mainwindow.ui = GeneralUi(mainwindow.user)
+        mainwindow.setCentralWidget(mainwindow.ui)
+    def create_question(self):
+        pass
+    def create_test(self):
+        self.message_hide()
+
 mainwindow = MainWindow()
 app.exec()
