@@ -19,7 +19,7 @@
      <x>9</x>
      <y>10</y>
      <width>871</width>
-     <height>481</height>
+     <height>701</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -97,18 +97,48 @@
     </item>
     <item>
      <widget class="QScrollArea" name="question_box">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>500</height>
+       </size>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustToContents</enum>
+      </property>
       <property name="widgetResizable">
        <bool>true</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
       </property>
       <widget class="QWidget" name="scrollAreaWidgetContents">
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>867</width>
-         <height>69</height>
+         <width>850</width>
+         <height>228</height>
         </rect>
        </property>
+       <widget class="QWidget" name="verticalLayoutWidget_2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>871</width>
+          <height>111</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="scroll_area_layout">
+         <property name="spacing">
+          <number>1</number>
+         </property>
+        </layout>
+       </widget>
       </widget>
      </widget>
     </item>

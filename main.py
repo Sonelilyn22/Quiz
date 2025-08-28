@@ -2,6 +2,7 @@ from PyQt6 import QtWidgets,uic
 import db
 import json
 import usermodel
+import quizmodel
 app = QtWidgets.QApplication([])#Приложение
 def depricated_form():
     window = QtWidgets.QWidget()#Окно
@@ -64,10 +65,14 @@ class GeneralUi(QtWidgets.QWidget):
         super().__init__()
         uic.loadUi('general.ui',self)
         self.findChild(QtWidgets.QLabel,'label_username').setText(user.login)#Задаём текст для надписи
-        self.findChild(QtWidgets.QPushButton,'exit_button').clicked.connect(self.exit)#Задаём выход для кнопки
+        self.findChild(QtWidgets.QPushButton,'exit_button').clicked.connect(self.exit)#Задаём выход для кнопки\
+        self.findChild(QtWidgets.QPushButton,'create_quiz_button').clicked.connect(self.to_create_test)
     def exit(self):
         set_user()
         mainwindow.ui = LoginUi()
+        mainwindow.setCentralWidget(mainwindow.ui)
+    def to_create_test(self):
+        mainwindow.ui = CreateTestUi()
         mainwindow.setCentralWidget(mainwindow.ui)
 class LoginUi(QtWidgets.QWidget):
     def __init__(self):
@@ -150,9 +155,18 @@ class RegUi(QtWidgets.QWidget):
         mainwindow.ui = LoginUi()
         mainwindow.setCentralWidget(mainwindow.ui)
 class CreateTestUi(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self,id = None):
         super().__init__()
         uic.loadUi('create_test.ui',self)
+        if id != None:
+            self.test = self.get_test(id)
+            self.findChild(QtWidgets.QLineEdit,'input_name').setText(self.test.name)
+            self.findChild(QtWidgets.QTextEdit,'input_description').setText(self.test.description)
+            for question in self.test.questions:
+                pass
+        else:
+            self.test = quizmodel.Test(mainwindow.user)
+        self.question_uis = []
         self.message_hide()
         self.findChild(QtWidgets.QPushButton,'back_button').clicked.connect(self.back)
         self.findChild(QtWidgets.QPushButton,'create_question_button').clicked.connect(self.create_question)
@@ -165,9 +179,35 @@ class CreateTestUi(QtWidgets.QWidget):
         mainwindow.ui = GeneralUi(mainwindow.user)
         mainwindow.setCentralWidget(mainwindow.ui)
     def create_question(self):
-        pass
+        question = quizmodel.Question()
+        self.test.add(question)
+        question_ui = CreateQuestionUi(question)
+        widget = QtWidgets.QWidget()
+        vbox = QtWidgets.QVBoxLayout(widget)
+        vbox.addWidget(question_ui)
+        self.findChild(QtWidgets.QScrollArea,'question_box').setLayout(vbox)
+        
+
     def create_test(self):
         self.message_hide()
+    def get_test(self,id):#Редактирование теста
+        test = quizmodel.Test(mainwindow.user) #Создадим модель
+        sql_test = db.get_one_by_id('tests',id)#Получим запись из бд в таблице tests
+        test.id = id #Зададим все свойства из бд в модель
+        test.name = sql_test[1]
+        test.description = sql_test[2]
+        for question_id in sql_test[3]:
+            question = db.get_one_by_id('questions',question_id)#Получим запись из бд в таблице questions 
+            newquestion = quizmodel.Question()
+            newquestion.create(question)
+            test.add(newquestion)
+        return test
+class CreateQuestionUi(QtWidgets.QWidget):
+    def __init__(self,question):
+        super().__init__()
+        uic.loadUi('create_question_box.ui',self)
+        self.findChild(QtWidgets.QLineEdit,'input_name').setText(question.text)
+
 
 mainwindow = MainWindow()
 app.exec()
