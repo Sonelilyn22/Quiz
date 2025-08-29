@@ -3,6 +3,7 @@ import db
 import json
 import usermodel
 import quizmodel
+import test
 app = QtWidgets.QApplication([])#Приложение
 def depricated_form():
     window = QtWidgets.QWidget()#Окно
@@ -158,6 +159,10 @@ class CreateTestUi(QtWidgets.QWidget):
     def __init__(self,id = None):
         super().__init__()
         uic.loadUi('create_test.ui',self)
+        self.scrollContent = QtWidgets.QWidget()
+        self.scroll_layout = QtWidgets.QVBoxLayout(self.scrollContent)
+        self.findChild(QtWidgets.QScrollArea).setWidgetResizable(True)
+        self.findChild(QtWidgets.QScrollArea).setWidget(self.scrollContent)
         if id != None:
             self.test = self.get_test(id)
             self.findChild(QtWidgets.QLineEdit,'input_name').setText(self.test.name)
@@ -168,6 +173,7 @@ class CreateTestUi(QtWidgets.QWidget):
             self.test = quizmodel.Test(mainwindow.user)
         self.question_uis = []
         self.message_hide()
+        self.findChild(QtWidgets.QScrollArea).setWidgetResizable(True)
         self.findChild(QtWidgets.QPushButton,'back_button').clicked.connect(self.back)
         self.findChild(QtWidgets.QPushButton,'create_question_button').clicked.connect(self.create_question)
         self.findChild(QtWidgets.QPushButton,'create_test_button').clicked.connect(self.create_test)
@@ -181,13 +187,8 @@ class CreateTestUi(QtWidgets.QWidget):
     def create_question(self):
         question = quizmodel.Question()
         self.test.add(question)
-        question_ui = CreateQuestionUi(question)
-        widget = QtWidgets.QWidget()
-        vbox = QtWidgets.QVBoxLayout(widget)
-        vbox.addWidget(question_ui)
-        self.findChild(QtWidgets.QScrollArea,'question_box').setLayout(vbox)
-        
-
+        question_ui = test.CreateQuestionUi()
+        self.scroll_layout.addWidget(question_ui)
     def create_test(self):
         self.message_hide()
     def get_test(self,id):#Редактирование теста
@@ -202,11 +203,7 @@ class CreateTestUi(QtWidgets.QWidget):
             newquestion.create(question)
             test.add(newquestion)
         return test
-class CreateQuestionUi(QtWidgets.QWidget):
-    def __init__(self,question):
-        super().__init__()
-        uic.loadUi('create_question_box.ui',self)
-        self.findChild(QtWidgets.QLineEdit,'input_name').setText(question.text)
+
 
 
 mainwindow = MainWindow()
